@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ShopEase – 12-Week Internship Daily Work Record</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f4ff;
+      color: #1e293b;
+      padding: 30px 20px;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 8px 40px rgba(99,102,241,0.12);
+      overflow: hidden;
+    }
+
+    /* HEADER */
+    .header {
+      background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 50%, #7c3aed 100%);
+      padding: 40px 48px 36px;
+      color: white;
+    }
+    .header h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .header p {
+      font-size: 14px;
+      opacity: 0.85;
+      margin-bottom: 4px;
+    }
+    .badge-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* BODY */
+    .body { padding: 36px 48px 48px; }
+
+    /* WEEK BLOCK */
+    .week-block {
+      margin-bottom: 36px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      page-break-inside: avoid;
+    }
+
+    .week-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 20px;
+      background: linear-gradient(90deg, #4338ca 0%, #7c3aed 100%);
+      color: white;
+    }
+    .week-number {
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 3px 10px;
+      white-space: nowrap;
+    }
+    .week-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* DAY ROWS */
+    .day-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 13px 20px;
+      border-bottom: 1px solid #f1f5f9;
+      transition: background 0.2s;
+    }
+    .day-row:last-child { border-bottom: none; }
+    .day-row:nth-child(even) { background: #f8faff; }
+
+    .day-label {
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: #4338ca;
+      background: #eef2ff;
+      border-radius: 6px;
+      padding: 3px 10px;
+      min-width: 56px;
+      text-align: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .day-text {
+      font-size: 13px;
+      line-height: 1.65;
+      color: #374151;
+    }
+
+    /* FOOTER */
+    .footer {
+      background: #1e1b4b;
+      color: white;
+      text-align: center;
+      padding: 18px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+    .footer span { color: #a5b4fc; }
+
+    /* Print styles */
+    @media print {
+      body { background: white; padding: 0; }
+      .container { box-shadow: none; border-radius: 0; }
+      .week-block { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>ShopEase – Internship Daily Work Record</h1>
+    <p><strong>Project:</strong> ShopEase – Full Stack E-Commerce Web Application</p>
+    <p><strong>Tech Stack:</strong> MongoDB · Express.js · React.js · Node.js (MERN Stack)</p>
+    <div class="badge-row">
+      <span class="badge">12 Weeks</span>
+      <span class="badge">60 Working Days</span>
+      <span class="badge">MERN Stack</span>
+      <span class="badge">Full Stack Development</span>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <!-- WEEK 1 -->
+    <div class="week-block">
+      <div class="week-header">
+        <span class="week-number">Week 1</span>
+        <span class="week-title">Project Planning &amp; Environment Setup</span>
+      </div>
+      <div class="day-row"><span class="day-label">Day 1</span><span class="day-text">Studied the project requirements and finalized the complete feature list for ShopEase including user authentication, product browsing, shopping cart, order management, and an admin panel for managing the platform.</span></div>
+      <div class="day-row"><span class="day-label">Day 2</span><span class="day-text">Installed Node.js (v18), MongoDB Community Server, and VS Code on the development machine, then created the project folder structure separating <code>frontend/</code> and <code>backend/</code> directories with a root <code>README.md</code>.</span></div>
+      <div class="day-row"><span class="day-label">Day 3</span><span class="day-text">Initialized the backend with <code>npm init</code> inside the <code>backend/</code> folder and installed core packages: <code>express</code>, <code>mongoose</code>, <code>dotenv</code>, <code>cors</code>, <code>bcryptjs</code>, and <code>jsonwebtoken</code>.</span></div>
+      <div class="day-row"><span class="day-label">Day 4</span><span class="day-text">Created <code>server.js</code> as the Express app entry point, configured middleware for JSON parsing and CORS, and connected to MongoDB using Mongoose with environment variables stored in a <code>.env</code> file.</span></div>
+      <div class="day-row"><span class="day-label">Day 5</span><span class="day-text">Initialized the React frontend using <code>npm create vite@latest</code>, installed <code>react-router-dom</code> and <code>axios</code>, and verified both frontend and backend dev servers run simultaneously without conflict.</span></div>
+    </div>
+
+    <!-- WEEK 2 -->
+    <div class="week-block">
+      <div class="week-header">
+        <span class="week-number">Week 2</span>
+        <span class="week-title">User Authentication (Backend)</span>
+      </div>
+      <div class="day-row"><span class="day-label">Day 1</span><span class="day-text">Designed and created the <code>User</code> Mongoose model in <code>backend/models/User.js</code> with fields: <code>name</code>, <code>email</code>, <code>password</code> (hashed), <code>isAdmin</code> (boolean, default false), and <code>createdAt</code> timestamp.</span></div>
+      <div class="day-row"><span class="day-label">Day 2</span><span class="day-text">Built the <code>registerUser</code> controller that checks for duplicate emails, hashes the password using <code>bcryptjs</code> with a salt of 10 rounds, saves the new user to MongoDB, and returns user info with a JWT token.</span></div>
+      <div class="day-row"><span class="day-label">Day 3</span><span class="day-text">Built the <code>loginUser</code> controller that finds a user by email, compares the entered password with the stored hash using <code>bcrypt.compare()</code>, and returns a signed JWT token valid for 30 days upon successful match.</span></div>
+      <div class="day-row"><span class="day-label">Day 4</span><span class="day-text">Created <code>authMiddleware.js</code> with a <code>protect</code> middleware that reads the Bearer token from the Authorization header, verifies it using <code>jwt.verify()</code>, and attaches the decoded user to <code>req.user</code>.</span></div>
+      <div class="day-row"><span class="day-label">Day 5</span><span class="day-text">Created an <code>admin</code> middleware that checks <code>req.user.isAdmin</code> and returns 403 Forbidden if not admin, then tested all auth endpoints using Postman with valid and invalid payloads.</span></div>
+    </div>
+
+    <!-- WEEK 3 -->
+    <div class="week-block">
+      <div class="week-header">
+        <span class="week-number">Week 3</span>
+        <span class="week-title">User Authentication (Frontend)</span>
+      </div>
+      <div class="day-row"><span class="day-label">Day 1</span><span class="day-text">Created <code>LoginPage.jsx</code> and <code>RegisterPage.jsx</code> with controlled React form inputs for email, password, and name, including inline validation messages for empty fields and invalid email format.</span></div>
+      <div class="day-row"><span class="day-label">Day 2</span><span class="day-text">Wired both forms to the backend using <code>axios.post()</code> — register hits <code>/api/users/register</code>, login hits <code>/api/users/login</code> — and handled API errors by displaying server error messages below the form.</span></div>
+      <div class="day-row"><span class="day-label">Day 3</span><span class="day-text">Created <code>AuthContext.jsx</code> using React's <code>createContext</code> and <code>useReducer</code> to globally manage the <code>userInfo</code> state including token, name, email, and <code>isAdmin</code> flag across all components.</span></div>
+      <div class="day-row"><span class="day-label">Day 4</span><span class="day-text">Built a <code>PrivateRoute</code> wrapper component in React Router that checks if the user is logged in via <code>AuthContext</code> and redirects unauthenticated users to <code>/login</code> with redirect state preserved.</span></div>
+      <div class="day-row"><span class="day-label">Day 5</span><span class="day-text">Stored <code>userInfo</code> in <code>localStorage</code> so the session persists across page refreshes, implemented the logout function to clear context state and localStorage, and added a logout button in the Navbar.</span></div>
+    </div>
+
+    <!-- WEEK 4 -->
+    <div class="week-block">
+      <div class="week-header">
+        <span class="week-number">Week 4</span>
+        <span class="week-title">Product Management (Backend)</span>
+      </div>
+      <div class="day-row"><span class="day-label">Day 1</span><span class="day-text">Designed the <code>Product</code> Mongoose model in <code>backend/models/Product.js</code> with fields: <code>name</code>, <code>description</code>, <code>price</code>, <code>category</code>, <code>brand</code>, <code>countInStock</code>, <code>images</code> (array), <code>rating</code>, and <code>numReviews</code>.</span></div>
+      <div class="day-row"><span class="day-label">Day 2</span><span class="day-text">Created <code>GET /api/products</code> that fetches all products from MongoDB, supports an optional <code>?keyword=</code> query for name-based search using a case-insensitive regex, and returns the full list as JSON.</span></div>
+      <div class="day-row"><span class="day-label">Day 3</span><span class="day-text">Built <code>POST /api/products</code> (admin only) that accepts product data from the request body, creates and saves a new Product document to MongoDB, applying both <code>protect</code> and <code>admin</code> middlewares.</span></div>
+      <div class="day-row"><span class="day-label">Day 4</span><span class="day-text">Implemented <code>PUT /api/products/:id</code> to find and update a product's fields from the request body, and <code>DELETE /api/products/:id</code> to remove it — both protected by <code>protect</code> and <code>admin</code> middlewares.</span></div>
+      <div class="day-row"><span class="day-label">Day 5</span><span class="day-text">Created <code>GET /api/products/:id</code> to fetch a single product by ID for the details page, and added proper error handling for invalid or non-existent IDs using a custom async error handler middleware.</span></div>
+    </div>
+
+    <!-- WEEK 5 -->
+    <div class="week-block">
+      <div class="week-header">
+        <span class="week-number">Week 5</span>
+        <span class="week-title">Product Listing (Frontend)</span>
+      </div>
+      <div class="day-row"><span class="day-label">Day 1</span><span class="day-text">Built <code>HomePage.jsx</code> with a full-width hero banner containing a tagline and CTA button, followed by a "Featured Products" section that fetches and renders the latest 8 products from <code>/api/products</code> using <code>useEffect</code>.</span></div>
+      <div class="day-row"><span class="day-label">Day 2</span><span class="day-text">Created <code>ProductsPage.jsx</code> that fetches the full product list from the backend and displays them in a responsive CSS Grid layout, with a loading spinner during fetch and an error message if the API call fails.</span></div>
+      <div class="day-row"><span class="day-label">Day 3</span><span class="day-text">Added a category filter sidebar on <code>ProductsPage.jsx</code> with buttons for each category that filter products client-side, and a search bar at the top that filters products by matching the keyword against product names.</span></div>
+      <div class="day-row"><span class="day-label">Day 4</span><span class="day-text">Built <code>ProductDetailsPage.jsx</code> that fetches a single product using its ID from <code>useParams()</code>, and displays the product's image, name, price, description, rating, stock availability, and an "Add to Cart" button.</span></div>
+      <div class="day-row"><span class="day-label">Day 5</span><span class="day-text">Added a sort dropdown with options Price Low to High, Price High to Low, and Newest First — implemented by sorting the fetched products array in state using JavaScript's <code>.sort()</code> method before rendering the grid.</span></div>
+    </div>
+
+    <!-- WEEK 6 -->
+    <div class="week-block">
+      <div class="week-header">
+        <span class="week-number">Week 6</span>
+        <span class="week-title">Shopping Cart &amp; Order Flow (Backend)</span>
+      </div>
+      <div class="day-row"><span class="day-label">Day 1</span><span class="day-text">Designed the <code>Cart</code> Mongoose model with a reference to the User and an array of cart items each containing <code>productId</code>, <code>name</code>, <code>price</code>, <code>image</code>, and <code>qty</code>, then built <code>POST /api/cart</code> to add or update items.</span></div>
+      <div class="day-row"><span class="day-label">Day 2</span><span class="day-text">Implemented <code>GET /api/cart</code> to retrieve the logged-in user's cart by matching <code>userId</code> from <code>req.user._id</code>, and <code>DELETE /api/cart/:itemId</code> to remove a product using MongoDB's <code>$pull</code> operator.</span></div>
+      <div class="day-row"><span class="day-label">Day 3</span><span class="day-text">Designed the <code>Order</code> Mongoose model with fields: <code>user</code> (ref to User), <code>orderItems</code> (array), <code>shippingAddress</code> (object with street, city, pincode), <code>paymentStatus</code>, and <code>orderStatus</code>.</span></div>
+      <div class="day-row"><span class="day-label">Day 4</span><span class="day-text">Built <code>POST /api/orders</code> that creates a new order document, uses <code>Product.findById()</code> to deduct ordered quantities from <code>countInStock</code> using <code>$inc</code>, and then clears the user's cart from the database.</span></div>
+      <div class="day-row"><span class="day-label">Day 5</span><span class="day-text">Implemented <code>GET /api/orders/myorders</code> to return all orders for the logged-in user sorted newest first, and <code>GET /api/orders/:id</code> to return a single order with full detail, both protected by <code>protect</code> middleware.</span></div>
+    </div>
+
+    <!-- WEEK 7 -->
+    <div class="week-block">
+      <div class="week-header">
+        <span class="week-number">Week 7</span>
+        <span class="week-title">Shopping Cart &amp; Order Flow (Frontend)</span>
+      </div>
+      <div class="day-row"><span class="day-label">Day 1</span><span class="day-text">Built <code>CartPage.jsx</code> that reads cart items from <code>CartContext</code>, displays each item with its image, name, unit price, and quantity selector (+ / - buttons), and calculates item subtotals and total cart price dynamically.</span></div>
+      <div class="day-row"><span class="day-label">Day 2</span><span class="day-text">Connected Cart page buttons to backend API calls — <code>PUT /api/cart/:itemId</code> for quantity change and <code>DELETE /api/cart/:itemId</code> for removal — then refreshed the cart state in <code>CartContext</code> after each operation.</span></div>
+      <div class="day-row"><span class="day-label">Day 3</span><span class="day-text">Created <code>CheckoutPage.jsx</code> with a shipping address form (street, city, state, pincode) and an order summary panel on the right showing all cart items, individual prices, and the final total before order confirmation.</span></div>
+      <div class="day-row"><span class="day-label">Day 4</span><span class="day-text">Wired the "Place Order" button to call <code>POST /api/orders</code> with cart items and shipping address, then redirected to <code>OrderSuccessPage.jsx</code> showing the order ID and a success message on a 201 response.</span></div>
+      <div class="day-row"><span class="day-label">Day 5</span><span class="day-text">Built <code>OrderHistoryPage.jsx</code> that fetches all orders from <code>GET /api/orders/myorders</code> and displays them with order ID, date, total, and a color-coded status badge (Processing / Shipped / Delivered) plus a "View Details" link.</span></div>
+    </div>
+
+    <!-- WEEK 8 -->
+    <div class="week-block">
+      <div class="week-header">
+        <span class="week-number">Week 8</span>
+        <span class="week-title">Admin Panel</span>
+      </div>
+      <div class="day-row"><span class="day-label">Day 1</span><span class="day-text">Created <code>AdminDashboard.jsx</code> accessible only to admin users via an <code>AdminRoute</code> wrapper, fetched summary stats from the backend (total products, orders, users count) and displayed them in stat cards.</span></div>
+      <div class="day-row"><span class="day-label">Day 2</span><span class="day-text">Built <code>ManageProductsPage.jsx</code> that fetches all products and renders them in a table with columns for image, name, price, category, stock, and action buttons (Edit / Delete), with Delete making a <code>DELETE /api/products/:id</code> call.</span></div>
+      <div class="day-row"><span class="day-label">Day 3</span><span class="day-text">Implemented an Add/Edit Product form in the admin panel that pre-fills with existing data when editing and sends a <code>PUT</code> request on save, or a <code>POST</code> request when adding a new product.</span></div>
+      <div class="day-row"><span class="day-label">Day 4</span><span class="day-text">Built <code>ManageOrdersPage.jsx</code> that fetches all orders from <code>GET /api/orders</code> (admin route) and displays them in a table, with a dropdown for each order to update its status via <code>PUT /api/orders/:id/status</code>.</span></div>
+      <div class="day-row"><span class="day-label">Day 5</span><span class="day-text">Created <code>ManageUsersPage.jsx</code> that fetches all registered users from <code>GET /api/users</code> (admin route) and lists them with name, email, and admin status toggle calling <code>PUT /api/users/:id</code> to update <code>isAdmin</code>.</span></div>
+    </div>
+
+    <!-- WEEK 9 -->
+    <div class="week-block">
+      <div class="week-header">
+        <span class="week-number">Week 9</span>
+        <span class="week-title">Product Image Upload Feature</span>
+      </div>
+      <div class="day-row"><span class="day-label">Day 1</span><span class="day-text">Installed <code>multer</code> in the backend using <code>npm install multer</code>, configured a storage engine in <code>multerConfig.js</code> to save files to the <code>backend/uploads/</code> directory with unique filenames using <code>Date.now() + extension</code>.</span></div>
+      <div class="day-row"><span class="day-label">Day 2</span><span class="day-text">Created <code>uploadRoutes.js</code> with a <code>POST /api/upload</code> endpoint using <code>multer.array('images', 5)</code> to accept up to 5 image files per request and returned saved file paths in the response.</span></div>
+      <div class="day-row"><span class="day-label">Day 3</span><span class="day-text">Updated the <code>Product</code> Mongoose model to ensure the <code>images</code> field is an array of strings (file paths), and updated both <code>POST</code> and <code>PUT</code> product controllers to accept and store multiple image paths.</span></div>
+      <div class="day-row"><span class="day-label">Day 4</span><span class="day-text">Updated <code>ManageProductsPage.jsx</code> to replace the image URL text input with a file picker (<code>&lt;input type="file" multiple /&gt;</code>), and added thumbnail previews of selected images using <code>URL.createObjectURL()</code>.</span></div>
+      <div class="day-row"><span class="day-label">Day 5</span><span class="day-text">On form submission, first sent selected files to <code>POST /api/upload</code> using a <code>FormData</code> object with <code>multipart/form-data</code>, then used the returned image paths in the product save API call to store them with the product.</span></div>
+    </div>
+
+    <!-- WEEK 10 -->
+    <div class="week-block">
+      <div class="week-header">
+        <span class="week-number">Week 10</span>
+        <span class="week-title">Account Dashboard &amp; User Profile</span>
+      </div>
+      <div class="day-row"><span class="day-label">Day 1</span><span class="day-text">Designed <code>AccountDashboard.jsx</code> as a multi-section page with a sidebar navigation containing links to "My Profile", "My Addresses", and "My Orders", and a main content area rendering the selected section on click.</span></div>
+      <div class="day-row"><span class="day-label">Day 2</span><span class="day-text">Built the "My Profile" section form with inputs for name, email, and new password (optional), wired to <code>PUT /api/users/profile</code> using the logged-in user's JWT token, and updated <code>AuthContext</code> with the new user info on success.</span></div>
+      <div class="day-row"><span class="day-label">Day 3</span><span class="day-text">Added an <code>addresses</code> array field to the <code>User</code> Mongoose model (each with street, city, state, pincode), then created <code>POST</code>, <code>PUT</code>, and <code>DELETE</code> address APIs under <code>/api/users/address</code>.</span></div>
+      <div class="day-row"><span class="day-label">Day 4</span><span class="day-text">Built the "My Addresses" section on the frontend with a list of saved addresses, an "Add New Address" form appearing on button click, and edit/delete options for each address — all wired to the backend APIs.</span></div>
+      <div class="day-row"><span class="day-label">Day 5</span><span class="day-text">Added client-side form validation (empty field checks, password length), displayed success and error toast notifications using a custom <code>Toast</code> component after each API operation, and secured all account routes behind <code>PrivateRoute</code>.</span></div>
+    </div>
+
+    <!-- WEEK 11 -->
+    <div class="week-block">
+      <div class="week-header">
+        <span class="week-number">Week 11</span>
+        <span class="week-title">UI Polish, Navigation &amp; Responsiveness</span>
+      </div>
+      <div class="day-row"><span class="day-label">Day 1</span><span class="day-text">Redesigned <code>Navbar.jsx</code> with the ShopEase logo on the left, category navigation links in the center, and icons on the right for Cart (with item count badge from <code>CartContext</code>) and a User dropdown showing Profile, Orders, and Logout.</span></div>
+      <div class="day-row"><span class="day-label">Day 2</span><span class="day-text">Chose a consistent design system — deep navy (<code>#0f172a</code>) as background, blue-purple gradient for accents, and "Inter" from Google Fonts as the global typeface — and applied these tokens across all pages via CSS variables in <code>index.css</code>.</span></div>
+      <div class="day-row"><span class="day-label">Day 3</span><span class="day-text">Added CSS transition animations for all buttons (<code>transform: scale(1.05)</code> on hover), card hover box-shadow effects, and a smooth loading skeleton shimmer animation using <code>@keyframes</code> to replace plain loading spinners on product grids.</span></div>
+      <div class="day-row"><span class="day-label">Day 4</span><span class="day-text">Wrapped all page layouts in responsive CSS Grid and Flexbox containers with media queries at 768px and 480px breakpoints, converted the product grid from 4-column to 2-column on tablet and 1-column on mobile, with a collapsible hamburger Navbar.</span></div>
+      <div class="day-row"><span class="day-label">Day 5</span><span class="day-text">Added a <code>BackButton</code> component using <code>useNavigate(-1)</code> from React Router on all inner pages (Product Details, Order Details, Checkout), fixed broken internal links, and added a <code>Footer.jsx</code> with links, social icons, and copyright text.</span></div>
+    </div>
+
+    <!-- WEEK 12 -->
+    <div class="week-block">
+      <div class="week-header">
+        <span class="week-number">Week 12</span>
+        <span class="week-title">Testing, Bug Fixes &amp; Final Submission</span>
+      </div>
+      <div class="day-row"><span class="day-label">Day 1</span><span class="day-text">Performed complete end-to-end testing as a regular user — registered a new account, logged in, browsed products by category, searched for items, added to cart, proceeded to checkout, placed an order, and verified it appeared in Order History.</span></div>
+      <div class="day-row"><span class="day-label">Day 2</span><span class="day-text">Logged in as an admin and tested all admin panel features — added a new product with multiple images, edited product details, deleted a product, updated an order's delivery status, and toggled a user's admin role — fixing all bugs found.</span></div>
+      <div class="day-row"><span class="day-label">Day 3</span><span class="day-text">Fixed remaining issues: resolved cart count not updating after order placement by clearing <code>CartContext</code>, fixed Product Details page crash when <code>images</code> array was empty, and added a custom 404 page using React Router's <code>*</code> wildcard path.</span></div>
+      <div class="day-row"><span class="day-label">Day 4</span><span class="day-text">Wrote the project <code>README.md</code> with sections covering project description, tech stack, full feature list, step-by-step local setup instructions, <code>.env</code> variable reference, and a complete list of all API endpoints with HTTP methods and access levels.</span></div>
+      <div class="day-row"><span class="day-label">Day 5</span><span class="day-text">Ran a final full review of the entire application — verified all routes, confirmed admin and user access controls, ensured no console errors, checked mobile responsiveness, and prepared all project files and documentation for college submission.</span></div>
+    </div>
+
+  </div><!-- end body -->
+
+  <!-- FOOTER -->
+  <div class="footer">
+    Total Duration: <span>12 Weeks</span> &nbsp;|&nbsp; <span>60 Working Days</span> &nbsp;|&nbsp; ShopEase – MERN Stack E-Commerce Project
+  </div>
+
+</div>
+</body>
+</html>

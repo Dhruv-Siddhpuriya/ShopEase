@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment variables (keep secrets out of git)
+.env
+**/.env
+
+# Backend uploads (user-uploaded files)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Frontend build output
+frontend/dist/
+frontend/build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+
+# Temporary lint/build artifacts
+frontend/lint.json
+frontend/lint.txt
+frontend/lint_output.txt
+frontend/build_log.txt
