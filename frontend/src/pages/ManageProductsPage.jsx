@@ -290,6 +290,31 @@ const ManageProductsPage = () => {
     const [editProduct, setEditProduct] = useState(null);
     const [confirmDeleteId, setConfirmDeleteId] = useState(null);
     const [successMsg, setSuccessMsg] = useState('');
+    const [selectedIds, setSelectedIds] = useState([]);
+
+    const toggleSelection = (id) => {
+        setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+    };
+
+    const toggleAll = (e) => {
+        if (e.target.checked) {
+            setSelectedIds(products.map(p => p._id));
+        } else {
+            setSelectedIds([]);
+        }
+    };
+
+    const handleBulkDelete = async () => {
+        if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} products?`)) return;
+        try {
+            await api.post('/products/bulk-delete', { ids: selectedIds });
+            showSuccess(`${selectedIds.length} products deleted!`);
+            setSelectedIds([]);
+            fetchProducts();
+        } catch (err) {
+            alert(err.response?.data?.message || err.message);
+        }
+    };
 
     const showSuccess = (msg) => { setSuccessMsg(msg); setTimeout(() => setSuccessMsg(''), 3000); };
 
@@ -362,9 +387,16 @@ const ManageProductsPage = () => {
                 <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
                     <Package className="w-8 h-8 text-indigo-500" /> Manage Products
                 </h1>
-                <button onClick={openAdd} className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow transition">
-                    <Plus className="w-4 h-4" /> Add Product
-                </button>
+                <div className="flex gap-3">
+                    {selectedIds.length > 0 && (
+                        <button onClick={handleBulkDelete} className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow transition">
+                            <Trash2 className="w-4 h-4" /> Delete ({selectedIds.length})
+                        </button>
+                    )}
+                    <button onClick={openAdd} className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow transition">
+                        <Plus className="w-4 h-4" /> Add Product
+                    </button>
+                </div>
             </div>
 
             {successMsg && (
@@ -378,6 +410,14 @@ const ManageProductsPage = () => {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-gray-50 border-b border-gray-100 uppercase text-xs text-gray-500 tracking-wider">
+                                <th className="p-4 w-10 text-center">
+                                    <input 
+                                        type="checkbox" 
+                                        className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
+                                        checked={products.length > 0 && selectedIds.length === products.length}
+                                        onChange={toggleAll}
+                                    />
+                                </th>
                                 <th className="p-4 font-semibold">ID</th>
                                 <th className="p-4 font-semibold">Product</th>
                                 <th className="p-4 font-semibold text-right">Price</th>
@@ -389,7 +429,15 @@ const ManageProductsPage = () => {
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {products.map(product => (
-                                <tr key={product._id} className="hover:bg-gray-50 transition text-sm">
+                                <tr key={product._id} className={`hover:bg-gray-50 transition text-sm ${selectedIds.includes(product._id) ? 'bg-indigo-50/30' : ''}`}>
+                                    <td className="p-4 text-center">
+                                        <input 
+                                            type="checkbox" 
+                                            className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
+                                            checked={selectedIds.includes(product._id)}
+                                            onChange={() => toggleSelection(product._id)}
+                                        />
+                                    </td>
                                     <td className="p-4 font-mono text-xs text-gray-400">{product._id.substring(0, 8)}…</td>
                                     <td className="p-4">
                                         <div className="flex items-center gap-3">

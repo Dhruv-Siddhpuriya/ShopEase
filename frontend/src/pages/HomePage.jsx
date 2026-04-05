@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import api from '../api';
 import ProductCard from '../components/ProductCard';
@@ -12,6 +12,20 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
+  const carouselRef = useRef(null);
+
+  const scrollLeft = () => {
+    if (carouselRef.current) {
+      carouselRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (carouselRef.current) {
+      carouselRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+    }
+  };
+
   // Pagination State
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
@@ -47,7 +61,7 @@ const HomePage = () => {
         } else {
           // Fetch grouped products for homepage (home view)
           const categoriesList = [
-            'Electronics', 'Fashion', 'Mobiles', 'Home & Kitchen',
+            'Laptops', 'Electronics', 'Fashion', 'Mobiles', 'Home & Kitchen',
             'Beauty', 'Sports', 'Toys', 'Grocery', 'Books', 'Furniture',
             'Appliances', 'Automotive'
           ];
@@ -120,7 +134,7 @@ const HomePage = () => {
   };
 
   const categoriesList = [
-    'Electronics', 'Fashion', 'Mobiles', 'Home & Kitchen',
+    'Laptops', 'Electronics', 'Fashion', 'Mobiles', 'Home & Kitchen',
     'Beauty', 'Sports', 'Toys', 'Grocery', 'Books', 'Furniture',
     'Appliances', 'Automotive'
   ];
@@ -197,6 +211,46 @@ const HomePage = () => {
                        </Link>
                    </div>
                </div>
+
+               {/* Categories Carousel */}
+               <section className="mb-16 px-2 relative">
+                 <div className="flex justify-between items-center mb-8 px-2">
+                     <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Shop by Category</h2>
+                     <div className="flex gap-2">
+                         <button onClick={scrollLeft} className="p-2 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50 transition text-gray-600 hover:text-indigo-600">
+                             <ChevronLeft className="w-5 h-5" />
+                         </button>
+                         <button onClick={scrollRight} className="p-2 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50 transition text-gray-600 hover:text-indigo-600">
+                             <ChevronRight className="w-5 h-5" />
+                         </button>
+                     </div>
+                 </div>
+                 <div ref={carouselRef} className="flex gap-4 sm:gap-6 overflow-x-auto pb-6 pt-2 px-2 snap-x [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    {[
+                      { name: 'Mobiles', image: '/images/categories/category_mobiles_1775367196623.png', link: '/?category=Mobiles' },
+                      { name: 'Electronics', image: '/images/categories/category_electronics_1775367850221.png', link: '/?category=Electronics' },
+                      { name: 'Appliances', image: '/images/categories/category_appliances_1775367214375.png', link: '/?category=Appliances' },
+                      { name: 'Fashion', image: '/images/categories/category_fashion_1775367230187.png', link: '/?category=Fashion' },
+                      { name: 'Home & Kitchen', image: '/images/categories/category_homekitchen_1775367865879.png', link: '/?category=Home%20%26%20Kitchen' },
+                      { name: 'Toys', image: '/images/categories/category_toys_1775367243438.png', link: '/?category=Toys' },
+                      { name: 'Beauty', image: '/images/categories/category_beauty_1775367260376.png', link: '/?category=Beauty' },
+                      { name: 'Furniture', image: '/images/categories/category_furniture_1775367276082.png', link: '/?category=Furniture' },
+                      { name: 'Sports', image: '/images/categories/category_sports_1775367882462.png', link: '/?category=Sports' },
+                      { name: 'Grocery', image: '/images/categories/category_grocery_1775367899644.png', link: '/?category=Grocery' },
+                      { name: 'Books', image: '/images/categories/category_books_1775367915157.png', link: '/?category=Books' },
+                      { name: 'Automotive', image: '/images/categories/category_automotive_1775367932392.png', link: '/?category=Automotive' },
+                      { name: 'Laptops', image: '/images/laptops/laptop_ultrabook_1775368145724.png', link: '/?category=Laptops' },
+                    ].map((cat, idx) => (
+                       <Link to={cat.link} key={idx} className="flex-shrink-0 w-36 sm:w-48 group snap-start">
+                           <div className="w-full aspect-square rounded-3xl overflow-hidden shadow-sm relative bg-gray-50 border border-gray-100 group-hover:shadow-2xl transition-all duration-300 transform group-hover:-translate-y-2">
+                               <img src={cat.image} alt={cat.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                               <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity"></div>
+                               <h3 className="absolute bottom-4 sm:bottom-6 left-0 right-0 text-center text-white font-extrabold tracking-wider text-base sm:text-lg">{cat.name}</h3>
+                           </div>
+                       </Link>
+                    ))}
+                 </div>
+               </section>
 
                {categoriesList.map((catName) => {
                   const catProducts = groupedProducts[catName] || [];

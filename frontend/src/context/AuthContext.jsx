@@ -6,10 +6,10 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(() => {
         try {
-            const storedUser = localStorage.getItem('userInfo');
+            const storedUser = sessionStorage.getItem('userInfo');
             return storedUser ? JSON.parse(storedUser) : null;
         } catch (e) {
-            localStorage.removeItem('userInfo');
+            sessionStorage.removeItem('userInfo');
             return null;
         }
     });
@@ -17,18 +17,18 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         const { data } = await api.post('/users/login', { email, password });
         setUser(data);
-        localStorage.setItem('userInfo', JSON.stringify(data));
+        sessionStorage.setItem('userInfo', JSON.stringify(data));
     };
 
     const register = async (name, email, password) => {
         const { data } = await api.post('/users', { name, email, password });
         setUser(data);
-        localStorage.setItem('userInfo', JSON.stringify(data));
+        sessionStorage.setItem('userInfo', JSON.stringify(data));
     };
 
     const logout = () => {
         setUser(null);
-        localStorage.removeItem('userInfo');
+        sessionStorage.removeItem('userInfo');
     };
 
     return (

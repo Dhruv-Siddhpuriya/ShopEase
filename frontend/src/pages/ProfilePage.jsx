@@ -174,11 +174,56 @@ const OrdersTab = () => {
         fetchOrders();
     }, []);
 
+    const [cancelOrderId, setCancelOrderId] = useState(null);
+
+    const cancelOrderHandler = (id) => {
+        setCancelOrderId(id);
+    };
+
+    const confirmCancelHandler = async (id) => {
+        try {
+            await api.put(`/orders/${id}/cancel`);
+            setOrders(orders.map(o => o._id === id ? { ...o, status: 'Cancelled' } : o));
+            setCancelOrderId(null);
+        } catch (err) {
+            alert(err.response?.data?.message || 'Error cancelling order');
+            setCancelOrderId(null);
+        }
+    };
+
     if (loading) return <div className="py-20 flex justify-center"><Loader /></div>;
     if (error) return <Message variant="danger">{error}</Message>;
 
     return (
         <div>
+            <Modal
+                show={!!cancelOrderId}
+                onClose={() => setCancelOrderId(null)}
+                title="Cancel Order"
+            >
+                <div className="space-y-4">
+                    <p className="text-gray-600 text-sm">
+                        Are you sure you want to cancel this order? This action cannot be undone.
+                    </p>
+                    <div className="flex gap-3 pt-4">
+                        <button
+                            type="button"
+                            onClick={() => setCancelOrderId(null)}
+                            className="flex-1 border border-gray-200 text-gray-700 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-50 transition"
+                        >
+                            Nevermind
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => confirmCancelHandler(cancelOrderId)}
+                            className="flex-1 bg-red-600 text-white py-2.5 rounded-xl font-bold text-sm hover:bg-red-700 transition"
+                        >
+                            Yes, cancel it
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-[#131921]">Your Orders</h2>
                 <span className="text-sm font-medium text-gray-500">{orders.length} orders placed</span>
@@ -193,7 +238,7 @@ const OrdersTab = () => {
             ) : (
                 <div className="space-y-6">
                     {orders.map((order) => (
-                        <div key={order._id} className="border border-gray-200 rounded-2xl overflow-hidden hover:shadow-md transition">
+                        <div key={order._id} className="border border-gray-200 rounded-2xl overflow-hidden hover:shadow-md transition bg-white">
                             <div className="bg-gray-50 px-6 py-4 flex flex-wrap gap-6 justify-between items-center border-b border-gray-200 text-sm">
                                 <div>
                                     <p className="text-gray-500 uppercase font-semibold text-xs mb-1">Order Placed</p>
@@ -208,13 +253,23 @@ const OrdersTab = () => {
                                     <p className="font-medium text-gray-900 font-mono text-xs">{order._id}</p>
                                 </div>
                             </div>
-                            <div className="p-6">
-                                <h3 className="font-bold text-lg mb-4 flex items-center">
-                                    {order.status === 'Delivered'
-                                        ? <><CheckCircle className="w-5 h-5 text-green-600 mr-2" /> Delivered</>
-                                        : <><Clock className="w-5 h-5 text-[#FF9900] mr-2" /> {order.status}</>}
-                                </h3>
-                                <p className="text-gray-600">{order.items?.length || 'Multiple'} item(s) in this order.</p>
+                            <div className="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                <div>
+                                    <h3 className="font-bold text-lg mb-2 flex items-center">
+                                        {order.status === 'Delivered' ? <><CheckCircle className="w-5 h-5 text-green-600 mr-2" /> Delivered</> :
+                                         order.status === 'Cancelled' ? <><X className="w-5 h-5 text-red-600 mr-2" /> Cancelled</> :
+                                         <><Clock className="w-5 h-5 text-[#FF9900] mr-2" /> {order.status}</>}
+                                    </h3>
+                                    <p className="text-gray-600">{order.items?.length || 'Multiple'} item(s) in this order.</p>
+                                </div>
+                                {(order.status === 'Pending' || order.status === 'Processing') && (
+                                    <button 
+                                        onClick={() => cancelOrderHandler(order._id)}
+                                        className="border border-red-200 text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg text-sm font-semibold transition"
+                                    >
+                                        Cancel Order
+                                    </button>
+                                )}
                             </div>
                         </div>
                     ))}

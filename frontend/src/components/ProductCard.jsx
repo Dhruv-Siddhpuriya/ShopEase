@@ -21,6 +21,23 @@ const ProductCard = ({ product }) => {
             {product.title}
           </h3>
         </Link>
+        
+        {/* Rating Badge */}
+        <div className="flex items-center gap-1.5 mb-2">
+            {product.rating > 0 && product.numReviews > 0 ? (
+                <>
+                    <div className="bg-green-600 shadow-sm text-white text-[11px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 tracking-wide leading-none">
+                        {product.rating.toFixed(1)} 
+                        <svg className="w-2.5 h-2.5 -mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.561-.955L10 0l2.951 5.955 6.561.955-4.756 4.635 1.122 6.545z"/>
+                        </svg>
+                    </div>
+                    <span className="text-xs font-medium text-gray-500 tracking-tight">({product.numReviews})</span>
+                </>
+            ) : (
+                <span className="text-xs font-medium text-gray-400">No Ratings</span>
+            )}
+        </div>
         <p className="text-sm text-gray-500 line-clamp-2 mb-4">
           {product.description?.startsWith('[') ? JSON.parse(product.description)[0] : (product.description || 'Premium quality product crafted for excellence.')}
         </p>

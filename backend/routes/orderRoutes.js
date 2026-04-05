@@ -8,6 +8,7 @@ const {
     getMyOrders,
     getOrders,
     deleteOrder,
+    cancelOrder,
 } = require('../controllers/orderController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
@@ -19,5 +20,6 @@ router.route('/myorders').get(protect, asyncHandler(getMyOrders));
 router.route('/:id').get(protect, asyncHandler(getOrderById)).delete(protect, admin, asyncHandler(deleteOrder));
 router.route('/:id/pay').put(protect, asyncHandler(updateOrderToPaid));
 router.route('/:id/deliver').put(protect, admin, asyncHandler(updateOrderToDelivered));
+router.route('/:id/cancel').put(protect, asyncHandler(cancelOrder));
 
 module.exports = router;

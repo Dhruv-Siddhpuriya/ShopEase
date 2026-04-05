@@ -4,7 +4,7 @@ const Product = require('../models/Product');
 // @route   GET /api/products
 // @access  Public
 const getProducts = async (req, res) => {
-    const pageSize = 12;
+    const pageSize = Number(req.query.limit) || 12;
     const page = Number(req.query.pageNumber) || 1;
 
     const keyword = req.query.keyword
@@ -20,6 +20,7 @@ const getProducts = async (req, res) => {
 
     const count = await Product.countDocuments({ ...keyword, ...category });
     const products = await Product.find({ ...keyword, ...category })
+        .sort({ createdAt: -1 }) // Sort by newest first to see freshly added products
         .limit(pageSize)
         .skip(pageSize * (page - 1));
 
@@ -52,6 +53,20 @@ const deleteProduct = async (req, res) => {
     } else {
         res.status(404);
         throw new Error('Product not found');
+    }
+};
+
+// @desc    Delete multiple products
+// @route   POST /api/products/bulk-delete
+// @access  Private/Admin
+const deleteMultipleProducts = async (req, res) => {
+    const { ids } = req.body;
+    if (ids && ids.length > 0) {
+        await Product.deleteMany({ _id: { $in: ids } });
+        res.json({ message: 'Products removed successfully' });
+    } else {
+        res.status(400);
+        throw new Error('No product IDs provided');
     }
 };
 
@@ -107,10 +122,49 @@ const updateProduct = async (req, res) => {
     }
 };
 
+// @desc    Create new review
+// @route   POST /api/products/:id/reviews
+// @access  Private
+const createProductReview = async (req, res) => {
+    const { rating, comment } = req.body;
+
+    const product = await Product.findById(req.params.id);
+
+    if (product) {
+        const alreadyReviewed = product.reviews.find(
+            (r) => r.user.toString() === req.user._id.toString()
+        );
+
+        if (alreadyReviewed) {
+            res.status(400);
+            throw new Error('Product already reviewed');
+        }
+
+        const review = {
+            name: req.user.name,
+            rating: Number(rating),
+            comment,
+            user: req.user._id,
+        };
+
+        product.reviews.push(review);
+        product.numReviews = product.reviews.length;
+        product.rating = product.reviews.reduce((acc, item) => item.rating + acc, 0) / product.reviews.length;
+
+        await product.save();
+        res.status(201).json({ message: 'Review added' });
+    } else {
+        res.status(404);
+        throw new Error('Product not found');
+    }
+};
+
 module.exports = {
     getProducts,
     getProductById,
     deleteProduct,
+    deleteMultipleProducts,
     createProduct,
     updateProduct,
+    createProductReview,
 };

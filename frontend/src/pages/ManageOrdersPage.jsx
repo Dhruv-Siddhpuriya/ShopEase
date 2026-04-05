@@ -106,6 +106,10 @@ const ManageOrdersPage = () => {
                                             <span className="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">
                                                 Delivered
                                             </span>
+                                        ) : order.status === 'Cancelled' ? (
+                                            <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded-full">
+                                                Cancelled
+                                            </span>
                                         ) : (
                                             <span className="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded-full">
                                                 {order.status}
@@ -114,7 +118,7 @@ const ManageOrdersPage = () => {
                                     </td>
                                     <td className="p-4">
                                         <div className="flex items-center justify-center gap-2 flex-wrap">
-                                            {order.status !== 'Delivered' && (
+                                            {order.status !== 'Delivered' && order.status !== 'Cancelled' && (
                                                 <button
                                                     onClick={() => deliverHandler(order._id)}
                                                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow transition flex items-center gap-1"

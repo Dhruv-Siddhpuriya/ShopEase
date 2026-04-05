@@ -1,4 +1,5 @@
 const Order = require('../models/Order');
+const Product = require('../models/Product');
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -24,6 +25,16 @@ const addOrderItems = async (req, res) => {
         });
 
         const createdOrder = await order.save();
+
+        // Decrease stock for each ordered item
+        for (const item of orderItems) {
+            const product = await Product.findById(item.product);
+            if (product) {
+                // Ensure stock doesn't go below 0 purely defensively
+                product.stock = Math.max(0, product.stock - item.quantity);
+                await product.save();
+            }
+        }
 
         res.status(201).json(createdOrder);
     }
@@ -118,6 +129,46 @@ const deleteOrder = async (req, res) => {
     }
 };
 
+// @desc    Cancel an order
+// @route   PUT /api/orders/:id/cancel
+// @access  Private
+const cancelOrder = async (req, res) => {
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+        if (req.user.role === 'admin' || order.user.toString() === req.user._id.toString()) {
+            if (order.status === 'Cancelled') {
+                res.status(400);
+                throw new Error('Order is already cancelled');
+            }
+            if (order.status === 'Delivered') {
+                res.status(400);
+                throw new Error('Cannot cancel a delivered order');
+            }
+
+            order.status = 'Cancelled';
+            const updatedOrder = await order.save();
+
+            // Restore the stock
+            for (const item of order.items) {
+                const product = await Product.findById(item.product);
+                if (product) {
+                    product.stock += item.quantity;
+                    await product.save();
+                }
+            }
+
+            res.json(updatedOrder);
+        } else {
+            res.status(401);
+            throw new Error('Not authorized to cancel this order');
+        }
+    } else {
+        res.status(404);
+        throw new Error('Order not found');
+    }
+};
+
 module.exports = {
     addOrderItems,
     getOrderById,
@@ -126,4 +177,5 @@ module.exports = {
     getMyOrders,
     getOrders,
     deleteOrder,
+    cancelOrder,
 };

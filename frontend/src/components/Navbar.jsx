@@ -1,8 +1,9 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ShoppingCart, User, LogOut, Settings, Search, ChevronDown, Menu, X } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
+import api from '../api';
 
 // ─── Flipkart-style category icons (inline SVG components) ───────────────────
 const CategoryBar = () => {
@@ -196,6 +197,35 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Search Suggestions State
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (keyword.trim().length < 2) {
+        setSuggestions([]);
+        return;
+      }
+      setIsSearching(true);
+      try {
+        const { data } = await api.get(`/products?keyword=${encodeURIComponent(keyword)}&pageNumber=1`);
+        setSuggestions(data.products ? data.products.slice(0, 5) : []);
+      } catch (err) {
+        console.error('Search error:', err);
+      } finally {
+        setIsSearching(false);
+      }
+    };
+
+    const timerId = setTimeout(() => {
+      fetchSuggestions();
+    }, 300);
+
+    return () => clearTimeout(timerId);
+  }, [keyword]);
+
   // Hide category bar on admin, profile, cart, checkout, login, register pages
   const hideCategoryBar = 
     location.pathname.startsWith('/admin') ||
@@ -233,21 +263,57 @@ const Navbar = () => {
           </Link>
 
           {/* Search Bar */}
-          <form onSubmit={submitHandler} className="flex-1 max-w-2xl hidden md:flex relative">
-            <input
-              type="text"
-              placeholder="Search for products, brands and more..."
-              className="w-full pl-4 pr-12 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50 text-sm"
-              onChange={(e) => setKeyword(e.target.value)}
-              value={keyword}
-            />
-            <button
-              type="submit"
-              className="absolute right-0 top-0 h-full px-4 text-white bg-indigo-600 rounded-r-lg hover:bg-indigo-700 transition"
-            >
-              <Search className="h-5 w-5" />
-            </button>
-          </form>
+          <div className="flex-1 max-w-2xl hidden md:flex relative flex-col group">
+            <form onSubmit={submitHandler} className="relative flex w-full">
+              <input
+                type="text"
+                placeholder="Search for products, brands and more..."
+                className="w-full pl-4 pr-12 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50 text-sm focus:bg-white transition-colors"
+                onChange={(e) => setKeyword(e.target.value)}
+                value={keyword}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              />
+              <button
+                type="submit"
+                className="absolute right-0 top-0 h-full px-4 text-indigo-600 rounded-r-lg hover:bg-gray-100 transition flex items-center justify-center"
+              >
+                <Search className="h-5 w-5" />
+              </button>
+            </form>
+
+            {/* Desktop Suggestions Dropdown */}
+            {showSuggestions && keyword.trim().length >= 2 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 shadow-2xl rounded-lg overflow-hidden z-[100] max-h-96 overflow-y-auto">
+                {isSearching ? (
+                   <div className="p-4 text-center text-sm text-gray-500 font-medium">Searching products...</div>
+                ) : suggestions.length > 0 ? (
+                   <ul>
+                     {suggestions.map(p => (
+                       <li key={p._id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition cursor-pointer">
+                          <Link 
+                              to={`/product/${p._id}`} 
+                              className="flex items-center gap-3 p-3 w-full" 
+                              onClick={() => { setShowSuggestions(false); setKeyword(''); }}
+                          >
+                              <img src={p.image || (p.images && p.images[0])} alt={p.title} className="w-10 h-10 object-contain rounded" onError={e => { e.target.src = 'https://placehold.co/40x40?text=?'; }} />
+                              <div className="flex flex-col overflow-hidden">
+                                  <span className="text-sm font-semibold text-gray-900 truncate">{p.title}</span>
+                                  <div className="flex items-center gap-2 mt-0.5">
+                                      <span className="text-xs text-indigo-600 font-bold">₹{p.price.toLocaleString('en-IN')}</span>
+                                      <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded font-semibold">{p.category}</span>
+                                  </div>
+                              </div>
+                          </Link>
+                       </li>
+                     ))}
+                   </ul>
+                ) : (
+                   <div className="p-4 text-center text-sm text-gray-500">No matching products found.</div>
+                )}
+              </div>
+            )}
+          </div>
 
           {/* Right Actions */}
           <div className="flex items-center gap-5 shrink-0 ml-auto">
@@ -326,19 +392,52 @@ const Navbar = () => {
       </div>
 
       {/* ── Mobile Search ── */}
-      <div className="md:hidden px-4 pb-3 bg-white">
-        <form onSubmit={submitHandler} className="flex relative">
-          <input
-            type="text"
-            placeholder="Search products..."
-            className="w-full pl-4 pr-12 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50 text-sm"
-            onChange={(e) => setKeyword(e.target.value)}
-            value={keyword}
-          />
-          <button type="submit" className="absolute right-0 top-0 h-full px-4 text-white bg-indigo-600 rounded-r-lg">
-            <Search className="h-4 w-4" />
-          </button>
-        </form>
+      <div className="md:hidden px-4 pb-3 bg-white relative z-50">
+        <div className="relative flex flex-col w-full">
+            <form onSubmit={submitHandler} className="flex relative w-full">
+              <input
+                type="text"
+                placeholder="Search products..."
+                className="w-full pl-4 pr-12 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50 text-sm focus:bg-white transition-colors"
+                onChange={(e) => setKeyword(e.target.value)}
+                value={keyword}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              />
+              <button type="submit" className="absolute right-0 top-0 h-full px-4 text-indigo-600 rounded-r-lg hover:bg-gray-100 transition flex items-center justify-center">
+                <Search className="h-4 w-4" />
+              </button>
+            </form>
+
+            {/* Mobile Suggestions Dropdown */}
+            {showSuggestions && keyword.trim().length >= 2 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 shadow-2xl rounded-lg overflow-hidden z-[100] max-h-72 overflow-y-auto">
+                {isSearching ? (
+                   <div className="p-4 text-center text-sm text-gray-500 font-medium">Searching...</div>
+                ) : suggestions.length > 0 ? (
+                   <ul>
+                     {suggestions.map(p => (
+                       <li key={p._id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition cursor-pointer">
+                          <Link 
+                              to={`/product/${p._id}`} 
+                              className="flex items-center gap-3 p-3 w-full" 
+                              onClick={() => { setShowSuggestions(false); setKeyword(''); }}
+                          >
+                              <img src={p.image || (p.images && p.images[0])} alt={p.title} className="w-10 h-10 object-contain rounded" onError={e => { e.target.src = 'https://placehold.co/40x40?text=?'; }} />
+                              <div className="flex flex-col overflow-hidden">
+                                  <span className="text-sm font-semibold text-gray-900 truncate">{p.title}</span>
+                                  <span className="text-xs text-indigo-600 font-bold">₹{p.price.toLocaleString('en-IN')}</span>
+                              </div>
+                          </Link>
+                       </li>
+                     ))}
+                   </ul>
+                ) : (
+                   <div className="p-4 text-center text-sm text-gray-500">No products found</div>
+                )}
+              </div>
+            )}
+        </div>
       </div>
 
       {/* ── Flipkart-style Category Bar ── */}
