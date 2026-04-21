@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../api';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
-import { ArrowLeft, ShoppingCart, Check, AlertCircle, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Check, AlertCircle, ChevronLeft, ChevronRight, ZoomIn, Sparkles } from 'lucide-react';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 
@@ -24,6 +24,10 @@ const ProductDetailsPage = () => {
     const [reviewError, setReviewError] = useState('');
     const [reviewSuccess, setReviewSuccess] = useState(false);
 
+    // AI Insights states
+    const [aiInsights, setAiInsights] = useState([]);
+    const [insightsLoading, setInsightsLoading] = useState(false);
+
     const { id } = useParams();
     const navigate = useNavigate();
     const { addToCart } = useContext(CartContext);
@@ -40,6 +44,17 @@ const ProductDetailsPage = () => {
                 setError(err.response?.data?.message || err.message);
             } finally {
                 setLoading(false);
+            }
+            
+            // Try fetching AI insights
+            try {
+                setInsightsLoading(true);
+                const { data: aiData } = await api.get(`/ai/suggestions/${id}`);
+                setAiInsights(aiData.suggestions || []);
+            } catch (e) {
+                // Silently fail if AI context is unavailable
+            } finally {
+                setInsightsLoading(false);
             }
         };
         fetchProduct();
@@ -289,6 +304,34 @@ const ProductDetailsPage = () => {
 
                         <div className="text-4xl font-bold text-gray-900 mb-6">
                             ₹{product.price?.toLocaleString('en-IN')}
+                        </div>
+
+                        {/* AI Insights Widget */}
+                        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 mb-8 border border-indigo-100/50 shadow-sm relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 hover:to-purple-500 to-purple-400"></div>
+                            <h3 className="text-lg font-bold text-indigo-900 flex items-center gap-2 mb-4">
+                                <Sparkles className="w-5 h-5 text-indigo-500" />
+                                Why Buy This? (AI Insights)
+                            </h3>
+                            
+                            {insightsLoading ? (
+                                <div className="space-y-3">
+                                    <div className="h-4 bg-indigo-100 rounded-full w-3/4 animate-pulse"></div>
+                                    <div className="h-4 bg-indigo-100 rounded-full w-5/6 animate-pulse"></div>
+                                    <div className="h-4 bg-indigo-100 rounded-full w-2/3 animate-pulse"></div>
+                                </div>
+                            ) : aiInsights.length > 0 ? (
+                                <ul className="space-y-2">
+                                    {aiInsights.map((insight, idx) => (
+                                        <li key={idx} className="flex items-start gap-2 text-indigo-800/80 text-sm">
+                                            <span className="text-indigo-400 mt-0.5">•</span>
+                                            <span>{insight}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p className="text-sm text-indigo-400/80 italic">Insights currently unavailable.</p>
+                            )}
                         </div>
 
                         <div className="text-gray-600 leading-relaxed text-lg mb-8 border-b pb-8">

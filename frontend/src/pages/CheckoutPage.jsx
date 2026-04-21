@@ -4,6 +4,7 @@ import { CartContext } from '../context/CartContext';
 import Message from '../components/Message';
 import api from '../api';
 import { CreditCard, Truck, CheckCircle, ArrowLeft } from 'lucide-react';
+import { loadScript } from '../utils/loadScript';
 
 const CheckoutPage = () => {
     const { cart, cartTotal, clearCart } = useContext(CartContext);
@@ -13,7 +14,7 @@ const CheckoutPage = () => {
     const [city, setCity] = useState('');
     const [postalCode, setPostalCode] = useState('');
     const [country, setCountry] = useState('');
-    const [paymentMethod, setPaymentMethod] = useState('Credit Card');
+    const [paymentMethod, setPaymentMethod] = useState('Razorpay');
     
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -36,19 +37,74 @@ const CheckoutPage = () => {
         }));
 
         try {
-            await api.post('/orders', {
+            const { data: createdOrder } = await api.post('/orders', {
                 orderItems,
                 shippingAddress: { address, city, postalCode, country },
                 paymentMethod,
                 totalAmount: cartTotal
             });
-            
-            setSuccess(true);
-            await clearCart();
-            
-            setTimeout(() => {
-                navigate('/orders');
-            }, 3000);
+
+            if (paymentMethod === 'Razorpay') {
+                const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
+                if (!res) {
+                    setError('Razorpay SDK failed to load. Are you offline?');
+                    setLoading(false);
+                    return;
+                }
+
+                const { data: rzpOrder } = await api.post('/orders/razorpay', {
+                    amount: cartTotal
+                });
+
+                const options = {
+                    key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_YOUR_KEY_ID_HERE',
+                    amount: rzpOrder.amount,
+                    currency: "INR",
+                    name: "ShopEase",
+                    description: "Order Checkout",
+                    order_id: rzpOrder.id,
+                    handler: async function (response) {
+                        try {
+                            await api.put(`/orders/${createdOrder._id}/pay`, {
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_signature: response.razorpay_signature,
+                            });
+                            setSuccess(true);
+                            await clearCart();
+                            setTimeout(() => {
+                                navigate('/orders');
+                            }, 3000);
+                        } catch (err) {
+                            setError('Payment verification failed');
+                            setLoading(false);
+                        }
+                    },
+                    prefill: {
+                        name: "ShopEase Customer",
+                        email: "customer@example.com",
+                        contact: "9999999999"
+                    },
+                    theme: {
+                        color: "#4f46e5"
+                    }
+                };
+
+                const paymentObject = new window.Razorpay(options);
+                paymentObject.on('payment.failed', function (response) {
+                    setError('Payment failed. Please try again.');
+                    setLoading(false);
+                });
+                paymentObject.open();
+
+            } else {
+                setSuccess(true);
+                await clearCart();
+                
+                setTimeout(() => {
+                    navigate('/orders');
+                }, 3000);
+            }
             
         } catch (err) {
             setError(err.response?.data?.message || err.message);
@@ -160,7 +216,7 @@ const CheckoutPage = () => {
                             <h2 className="text-2xl font-bold text-gray-900">Payment Method</h2>
                         </div>
                         <div className="space-y-4">
-                            {['Credit Card', 'PayPal', 'Cash on Delivery'].map(method => (
+                            {['Razorpay', 'Credit Card', 'PayPal', 'Cash on Delivery'].map(method => (
                                 <label key={method} className={`flex items-center p-4 border rounded-xl cursor-pointer transition-all ${paymentMethod === method ? 'border-indigo-600 bg-indigo-50 shadow-sm' : 'border-gray-200 hover:border-indigo-300'}`}>
                                     <input 
                                         type="radio" 

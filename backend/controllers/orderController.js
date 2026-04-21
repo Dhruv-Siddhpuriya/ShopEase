@@ -1,5 +1,7 @@
 const Order = require('../models/Order');
 const Product = require('../models/Product');
+const Razorpay = require('razorpay');
+const crypto = require('crypto');
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -63,16 +65,34 @@ const getOrderById = async (req, res) => {
     }
 };
 
-// @desc    Update order to paid (for simplicity, we just have a mock endpoint)
+// @desc    Update order to paid
 // @route   PUT /api/orders/:id/pay
 // @access  Private
 const updateOrderToPaid = async (req, res) => {
     const order = await Order.findById(req.params.id);
 
     if (order) {
+        if (req.body.razorpay_payment_id) {
+            const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+            const sign = razorpay_order_id + '|' + razorpay_payment_id;
+            const expectedSign = crypto
+                .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+                .update(sign.toString())
+                .digest('hex');
+
+            if (razorpay_signature !== expectedSign) {
+                res.status(400);
+                throw new Error('Invalid payment signature');
+            }
+            order.paymentResult = {
+                razorpay_order_id,
+                razorpay_payment_id,
+                razorpay_signature,
+            };
+        }
+
         order.isPaid = true;
         order.paidAt = Date.now();
-        // Payment result would typically come from Stripe/PayPal
 
         const updatedOrder = await order.save();
 
@@ -80,6 +100,34 @@ const updateOrderToPaid = async (req, res) => {
     } else {
         res.status(404);
         throw new Error('Order not found');
+    }
+};
+
+// @desc    Create Razorpay Order
+// @route   POST /api/orders/razorpay
+// @access  Private
+const createRazorpayOrder = async (req, res) => {
+    try {
+        const instance = new Razorpay({
+            key_id: process.env.RAZORPAY_KEY_ID,
+            key_secret: process.env.RAZORPAY_KEY_SECRET,
+        });
+
+        const options = {
+            amount: req.body.amount * 100, // amount in smallest currency unit
+            currency: 'INR',
+            receipt: 'receipt_order_' + Date.now() + Math.random().toString(36).substring(7),
+        };
+
+        const order = await instance.orders.create(options);
+        if (!order) {
+            res.status(500);
+            throw new Error('Some error occured while generating Razorpay order');
+        }
+        res.json(order);
+    } catch (error) {
+        res.status(500);
+        throw new Error(error.message);
     }
 };
 
@@ -178,4 +226,5 @@ module.exports = {
     getOrders,
     deleteOrder,
     cancelOrder,
+    createRazorpayOrder,
 };
