@@ -17,6 +17,10 @@ const ProductDetailsPage = () => {
     const [activeImg, setActiveImg] = useState(0);
     const [isZoomed, setIsZoomed] = useState(false);
     
+    // Variant states
+    const [selectedColor, setSelectedColor] = useState('');
+    const [selectedStorage, setSelectedStorage] = useState(null);
+    
     // Review states
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
@@ -41,6 +45,8 @@ const ProductDetailsPage = () => {
                 const { data } = await api.get(`/products/${id}`);
                 setProduct(data);
                 setActiveImg(0);
+                if (data.colors && data.colors.length > 0) setSelectedColor(data.colors[0]);
+                if (data.storageOptions && data.storageOptions.length > 0) setSelectedStorage(data.storageOptions[0]);
             } catch (err) {
                 setError(err.response?.data?.message || err.message);
             } finally {
@@ -304,8 +310,43 @@ const ProductDetailsPage = () => {
                         )}
 
                         <div className="text-4xl font-bold text-gray-900 mb-6">
-                            ₹{product.price?.toLocaleString('en-IN')}
+                            ₹{(selectedStorage ? selectedStorage.price : product.price)?.toLocaleString('en-IN')}
                         </div>
+
+                        {/* Variant Selection */}
+                        {product.colors?.length > 0 && (
+                            <div className="mb-4">
+                                <span className="block text-sm font-semibold text-gray-700 mb-2">Color: <span className="text-gray-900">{selectedColor}</span></span>
+                                <div className="flex gap-2 flex-wrap">
+                                    {product.colors.map((color, idx) => (
+                                        <button 
+                                            key={idx} 
+                                            onClick={() => setSelectedColor(color)}
+                                            className={`px-4 py-2 border rounded-full text-sm font-medium transition ${selectedColor === color ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-gray-300 text-gray-700 hover:border-indigo-400'}`}
+                                        >
+                                            {color}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {product.storageOptions?.length > 0 && (
+                            <div className="mb-6">
+                                <span className="block text-sm font-semibold text-gray-700 mb-2">Storage: <span className="text-gray-900">{selectedStorage?.capacity}</span></span>
+                                <div className="flex flex-wrap gap-2">
+                                    {product.storageOptions.map((opt, idx) => (
+                                        <button 
+                                            key={idx} 
+                                            onClick={() => setSelectedStorage(opt)}
+                                            className={`px-4 py-3 border rounded-xl text-sm font-medium transition flex flex-col items-center min-w-[100px] ${selectedStorage?.capacity === opt.capacity ? 'border-indigo-600 bg-indigo-50 text-indigo-700 shadow-[0_0_0_1px_rgba(79,70,229,1)]' : 'border-gray-300 text-gray-700 hover:border-indigo-400'}`}
+                                        >
+                                            <span className="font-bold">{opt.capacity}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
                         {/* AI Insights Widget */}
                         <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-6 mb-8 border border-indigo-100/50 shadow-sm relative overflow-hidden">
@@ -346,6 +387,27 @@ const ProductDetailsPage = () => {
                                 <p className="whitespace-pre-wrap text-base">{product.description}</p>
                             )}
                         </div>
+
+                        {/* ── Specifications Section ── */}
+                        {product.specifications?.length > 0 && (
+                            <div className="mb-8">
+                                <div className="bg-[#1a1a1c] text-gray-200 rounded-2xl p-6 md:p-8 overflow-hidden shadow-2xl border border-gray-800">
+                                    <h2 className="text-2xl font-bold text-white mb-6 tracking-tight">Specifications</h2>
+                                    <div className="border border-gray-800 rounded-xl overflow-hidden bg-[#222224]">
+                                        <table className="w-full text-left border-collapse">
+                                            <tbody className="divide-y divide-gray-800">
+                                                {product.specifications.map((spec, idx) => (
+                                                    <tr key={idx} className="hover:bg-[#2a2a2c] transition duration-200">
+                                                        <td className="p-4 md:p-5 font-semibold text-gray-400 w-1/3 md:w-1/4 border-r border-gray-800 align-top">{spec.label}</td>
+                                                        <td className="p-4 md:p-5 text-gray-200 leading-relaxed align-top">{spec.value}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         <div className="mb-6 flex space-x-4 items-center bg-gray-50 p-4 rounded-xl">
                             <span className="text-gray-700 font-medium">Status:</span>

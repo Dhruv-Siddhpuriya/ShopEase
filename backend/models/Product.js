@@ -63,6 +63,22 @@ const productSchema = new mongoose.Schema(
             required: true,
             default: 0,
         },
+        colors: {
+            type: [String],
+            default: [],
+        },
+        storageOptions: [
+            {
+                capacity: { type: String, required: true },
+                price: { type: Number, required: true }
+            }
+        ],
+        specifications: [
+            {
+                label: { type: String, required: true },
+                value: { type: String, required: true }
+            }
+        ]
     },
     {
         timestamps: true,

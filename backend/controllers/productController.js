@@ -74,7 +74,7 @@ const deleteMultipleProducts = async (req, res) => {
 // @route   POST /api/products
 // @access  Private/Admin
 const createProduct = async (req, res) => {
-    const { title, price, description, image, images, category, stock } = req.body;
+    const { title, price, description, image, images, category, stock, colors, storageOptions, specifications } = req.body;
     const imageList = images && images.length > 0 ? images : (image ? [image] : []);
     const product = new Product({
         title: title || 'New Product',
@@ -85,6 +85,9 @@ const createProduct = async (req, res) => {
         category: category || 'General',
         stock: stock !== undefined ? stock : 0,
         description: description || 'Product description',
+        colors: colors || [],
+        storageOptions: storageOptions || [],
+        specifications: specifications || [],
     });
 
     const createdProduct = await product.save();
@@ -95,7 +98,7 @@ const createProduct = async (req, res) => {
 // @route   PUT /api/products/:id
 // @access  Private/Admin
 const updateProduct = async (req, res) => {
-    const { title, price, description, image, images, category, stock } = req.body;
+    const { title, price, description, image, images, category, stock, colors, storageOptions, specifications } = req.body;
 
     const product = await Product.findById(req.params.id);
 
@@ -105,6 +108,10 @@ const updateProduct = async (req, res) => {
         product.description = description || product.description;
         product.category = category || product.category;
         product.stock = stock !== undefined ? stock : product.stock;
+        
+        if (colors !== undefined) product.colors = colors;
+        if (storageOptions !== undefined) product.storageOptions = storageOptions;
+        if (specifications !== undefined) product.specifications = specifications;
 
         if (images && images.length > 0) {
             product.images = images;

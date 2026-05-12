@@ -157,6 +157,9 @@ const ImageUploader = ({ existingImages = [], onChange }) => {
 const ProductModal = ({ show, onClose, onSave, initialData, isLoading }) => {
     const [form, setForm] = useState(emptyForm);
     const [images, setImages] = useState([]);
+    const [colorsInput, setColorsInput] = useState('');
+    const [storageOptions, setStorageOptions] = useState([]);
+    const [specifications, setSpecifications] = useState([]);
     const [error, setError] = useState('');
 
     useEffect(() => {
@@ -172,11 +175,33 @@ const ProductModal = ({ show, onClose, onSave, initialData, isLoading }) => {
                     ? [initialData.image]
                     : [];
             setImages(existing);
+            
+            // Seed variants
+            setColorsInput(initialData?.colors ? initialData.colors.join(', ') : '');
+            setStorageOptions(initialData?.storageOptions || []);
+            setSpecifications(initialData?.specifications || []);
+            
             setError('');
         }
     }, [show, initialData]);
 
     const handleChange = (e) => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+
+    const handleAddStorage = () => setStorageOptions([...storageOptions, { capacity: '', price: 0 }]);
+    const handleUpdateStorage = (index, field, value) => {
+        const newOptions = [...storageOptions];
+        newOptions[index][field] = value;
+        setStorageOptions(newOptions);
+    };
+    const handleRemoveStorage = (index) => setStorageOptions(storageOptions.filter((_, i) => i !== index));
+
+    const handleAddSpec = () => setSpecifications([...specifications, { label: '', value: '' }]);
+    const handleUpdateSpec = (index, field, value) => {
+        const newSpecs = [...specifications];
+        newSpecs[index][field] = value;
+        setSpecifications(newSpecs);
+    };
+    const handleRemoveSpec = (index) => setSpecifications(specifications.filter((_, i) => i !== index));
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -185,8 +210,18 @@ const ProductModal = ({ show, onClose, onSave, initialData, isLoading }) => {
         if (!form.price || isNaN(form.price)) return setError('Valid price is required.');
         if (!form.description.trim()) return setError('Description is required.');
         if (images.length === 0) return setError('Please upload at least one image.');
+        
         try {
-            await onSave({ ...form, images, image: images[0] });
+            const parsedColors = colorsInput.split(',').map(c => c.trim()).filter(c => c);
+            const payload = { 
+                ...form, 
+                images, 
+                image: images[0],
+                colors: parsedColors,
+                storageOptions,
+                specifications
+            };
+            await onSave(payload);
         } catch (err) {
             setError(err.response?.data?.message || err.message);
         }
@@ -262,6 +297,49 @@ const ProductModal = ({ show, onClose, onSave, initialData, isLoading }) => {
                             className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition resize-none"
                         />
                     </div>
+
+                    {form.category === 'Mobiles' && (
+                        <div className="border-t border-gray-100 pt-4 space-y-4">
+                            <h3 className="font-bold text-gray-900">Mobile Variants & Specifications</h3>
+                            
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1">Colors (comma separated)</label>
+                                <input
+                                    value={colorsInput} onChange={(e) => setColorsInput(e.target.value)}
+                                    placeholder="e.g. Space Black, Silver, Gold"
+                                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+                                />
+                            </div>
+
+                            <div>
+                                <div className="flex justify-between items-center mb-2">
+                                    <label className="block text-sm font-semibold text-gray-700">Storage Options</label>
+                                    <button type="button" onClick={handleAddStorage} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"><Plus className="w-3 h-3"/> Add Storage</button>
+                                </div>
+                                {storageOptions.map((opt, i) => (
+                                    <div key={i} className="flex gap-2 mb-2">
+                                        <input placeholder="Capacity (e.g. 256GB)" value={opt.capacity} onChange={e => handleUpdateStorage(i, 'capacity', e.target.value)} className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+                                        <input type="number" placeholder="Price (₹)" value={opt.price || ''} onChange={e => handleUpdateStorage(i, 'price', Number(e.target.value))} className="w-24 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+                                        <button type="button" onClick={() => handleRemoveStorage(i)} className="p-2 text-red-500 hover:bg-red-50 rounded-xl"><Trash2 className="w-4 h-4"/></button>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div>
+                                <div className="flex justify-between items-center mb-2">
+                                    <label className="block text-sm font-semibold text-gray-700">Specifications</label>
+                                    <button type="button" onClick={handleAddSpec} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"><Plus className="w-3 h-3"/> Add Spec</button>
+                                </div>
+                                {specifications.map((spec, i) => (
+                                    <div key={i} className="flex gap-2 mb-2">
+                                        <input placeholder="Label (e.g. Display)" value={spec.label} onChange={e => handleUpdateSpec(i, 'label', e.target.value)} className="w-1/3 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+                                        <input placeholder="Value" value={spec.value} onChange={e => handleUpdateSpec(i, 'value', e.target.value)} className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+                                        <button type="button" onClick={() => handleRemoveSpec(i)} className="p-2 text-red-500 hover:bg-red-50 rounded-xl"><Trash2 className="w-4 h-4"/></button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     <div className="flex gap-3 pt-2">
                         <button type="button" onClick={onClose}
