@@ -1,13 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
+import { getImageUrl } from '../utils/imageHelper';
 
 const ProductCard = ({ product }) => {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full">
       <Link to={`/product/${product._id}`} className="block relative overflow-hidden bg-gray-50 h-56 shrink-0">
         <img 
-          src={product.image} 
+          src={getImageUrl(product.image)} 
           alt={product.title} 
           className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
         />

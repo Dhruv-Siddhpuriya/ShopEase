@@ -4,6 +4,7 @@ import api from '../api';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { Plus, Edit, Trash2, ArrowLeft, X, Save, Package, Upload, ImagePlus } from 'lucide-react';
+import { getImageUrl } from '../utils/imageHelper';
 
 const CATEGORIES = [
     'Electronics', 'Fashion', 'Mobiles', 'Home & Kitchen', 'Beauty',
@@ -85,7 +86,7 @@ const ImageUploader = ({ existingImages = [], onChange }) => {
                     {previews.map((url, idx) => (
                         <div key={idx} className="relative group rounded-xl overflow-hidden border-2 border-gray-100 bg-gray-50 aspect-square">
                             <img
-                                src={url}
+                                src={getImageUrl(url)}
                                 alt={`img-${idx}`}
                                 className="w-full h-full object-cover"
                                 onError={e => { e.target.src = 'https://placehold.co/100x100?text=IMG'; }}
@@ -442,7 +443,7 @@ const ManageProductsPage = () => {
                                     <td className="p-4">
                                         <div className="flex items-center gap-3">
                                             <img
-                                                src={getProductImage(product)}
+                                                src={getImageUrl(getProductImage(product))}
                                                 alt={product.title}
                                                 className="w-12 h-12 rounded-lg object-cover border border-gray-100 flex-shrink-0"
                                                 onError={e => { e.target.src = 'https://placehold.co/48x48?text=?'; }}
@@ -462,7 +463,7 @@ const ManageProductsPage = () => {
                                     <td className="p-4 text-center">
                                         <div className="flex items-center justify-center gap-1">
                                             {(product.images?.length > 0 ? product.images : product.image ? [product.image] : []).slice(0, 3).map((img, i) => (
-                                                <img key={i} src={img} alt="" className="w-7 h-7 rounded object-cover border border-gray-100" onError={e => { e.target.src = 'https://placehold.co/28x28?text=?'; }} />
+                                                <img key={i} src={getImageUrl(img)} alt="" className="w-7 h-7 rounded object-cover border border-gray-100" onError={e => { e.target.src = 'https://placehold.co/28x28?text=?'; }} />
                                             ))}
                                             {(product.images?.length || 0) > 3 && (
                                                 <span className="text-xs text-gray-400 font-medium">+{product.images.length - 3}</span>

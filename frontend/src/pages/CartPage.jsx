@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
+import { getImageUrl } from '../utils/imageHelper';
 import { Trash2, ArrowRight } from 'lucide-react';
 import Message from '../components/Message';
 
@@ -36,7 +37,7 @@ const CartPage = () => {
                             <div key={item._id} className="p-6 flex flex-col sm:flex-row items-center gap-6 hover:bg-gray-50 transition">
                                 <Link to={`/product/${item.product._id}`} className="flex-shrink-0">
                                     <img 
-                                        src={item.product.image} 
+                                        src={getImageUrl(item.product.image)} 
                                         alt={item.product.title} 
                                         className="w-24 h-24 sm:w-32 sm:h-32 object-contain bg-white rounded-lg border border-gray-100"
                                     />

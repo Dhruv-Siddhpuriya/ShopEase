@@ -6,6 +6,7 @@ import Message from '../components/Message';
 import { ArrowLeft, ShoppingCart, Check, AlertCircle, ChevronLeft, ChevronRight, ZoomIn, Sparkles } from 'lucide-react';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
+import { getImageUrl } from '../utils/imageHelper';
 
 const ProductDetailsPage = () => {
     const [product, setProduct] = useState({});
@@ -205,7 +206,7 @@ const ProductDetailsPage = () => {
                             {images.length > 0 ? (
                                 <>
                                     <img
-                                        src={images[activeImg]}
+                                        src={getImageUrl(images[activeImg])}
                                         alt={product.title}
                                         className={`max-h-[450px] object-contain transition-all duration-300 ${isZoomed ? 'scale-150 cursor-zoom-out' : 'hover:scale-105 cursor-zoom-in'}`}
                                         onClick={() => setIsZoomed(z => !z)}
@@ -265,7 +266,7 @@ const ProductDetailsPage = () => {
                                         className={`flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all ${i === activeImg ? 'border-indigo-500 shadow-md scale-105' : 'border-gray-200 hover:border-indigo-300'}`}
                                     >
                                         <img
-                                            src={img}
+                                            src={getImageUrl(img)}
                                             alt={`thumb-${i}`}
                                             className="w-full h-full object-cover"
                                             onError={e => { e.target.src = 'https://placehold.co/64x64?text=?'; }}
